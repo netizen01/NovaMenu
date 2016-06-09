@@ -1,11 +1,14 @@
 //
 //  NovaMenu
 //
-// Inspired By: https://dribbble.com/shots/1977075-New-app-Menu-Interaction
+//  Inspired By: https://dribbble.com/shots/1977075-New-app-Menu-Interaction
 //
 
 import UIKit
 import Cartography
+import NovaLines
+
+
 
 public struct NovaMenuStyle {
     public var itemHeight: CGFloat = 44
@@ -21,6 +24,7 @@ public struct NovaMenuStyle {
     public var buttonColor: UIColor = .whiteColor()
     public var separatorColor: UIColor = UIColor(white: 1, alpha: 0.25)
     public var menuBorderColor: UIColor = .clearColor()
+    public var menuTitleColor: UIColor = .whiteColor()
     
     public var animationOpenDuration: NSTimeInterval = 0.75
     public var animationCloseDuration: NSTimeInterval = 0.6
@@ -28,7 +32,7 @@ public struct NovaMenuStyle {
     public var animationSpringDamping: CGFloat = 0.7
     
     public var openStatusBarStyle: UIStatusBarStyle = .LightContent
-    public var menuTitleFont: UIFont = UIFont(name: NovaMenuDefaultFontName, size: 16)!
+    public var menuTitleFont: UIFont = UIFont(name: NovaMenuDefaultFontName, size: 18)!
     
     public init() {
         
@@ -163,6 +167,7 @@ public class NovaMenuViewController: UIViewController {
     
     public func reloadMenuItems() {
         menuView.tableView.reloadData()
+        menuView.navigationBar.menuTitle.text = dataSource?.novaMenuTitle()
         
         // TODO: animate the expand button
     }
@@ -211,17 +216,19 @@ public class NovaMenuViewController: UIViewController {
         }
         
         menuHeightConstaints = constrain(view, menuView) { view, menuView in
-//            menuView.top == view.bottom - NovaMenuHeight ~ 100
             menuView.height == NovaMenuHeight ~ 100
         }
         
         menuView.navigationBar.expandButton.addTarget(self, action: #selector(NovaMenuViewController.expandButtonHandler(_:)), forControlEvents: .TouchUpInside)
         menuView.navigationBar.expandButton.lineColor = style.buttonColor
         menuView.navigationBar.borderView.backgroundColor = style.menuBorderColor
+        menuView.navigationBar.menuTitle.font = style.menuTitleFont
+        menuView.navigationBar.menuTitle.textColor = style.menuTitleColor
         
         menuView.tableView.separatorColor = style.separatorColor
         menuView.tableView.dataSource = self
         menuView.tableView.delegate = self
+        
     }
     
     func expandButtonHandler(sender: UIButton) {
@@ -239,47 +246,24 @@ public class NovaMenuViewController: UIViewController {
                 return
             }
             
-            let height = NovaMenuHeight + (expanded ? CGFloat(dataSource!.novaMenuNumberOfItems()) * style.itemHeight + style.menuPadding + style.menuBottomMargin : 0)
-            let animationDuration: NSTimeInterval
-            
-            let rootTransform: CGAffineTransform
-            let rootAlpha: CGFloat
-            let dimmerAlpha: CGFloat
-            
-            let contentAlpha: CGFloat
-            let contentDuration: NSTimeInterval
-            let contentDelay: NSTimeInterval
+            let animationDuration = expanded ? style.animationOpenDuration : style.animationCloseDuration
+            let rootTransform = expanded ? CGAffineTransformMakeScale(style.rootScale, style.rootScale) : CGAffineTransformMakeScale(1, 1)
+            let rootAlpha: CGFloat = expanded ? style.rootFadeAlpha : 1
+            let dimmerAlpha: CGFloat = expanded ? 1 : 0
+            let contentAlpha: CGFloat = expanded ? 0 : 1
+            let titleAlpha: CGFloat = expanded ? 1 : 0
+            let contentDuration = expanded ? animationDuration * 0.25 : animationDuration * 0.5
+            let contentDelay: NSTimeInterval = expanded ? 0 : animationDuration * 0.5
+            let drawState: CGFloat = expanded ? 1 : 0
+            let buttonLineType: NovaLineType = expanded ? .Close : .Menu2
             if expanded {
-                animationDuration = style.animationOpenDuration
-                
-                menuView.tableView.reloadData()
-                menuHeightConstaints = constrain(view, menuView, replace: menuHeightConstaints) { view, menuView in
-//                    menuView.top == view.bottom - height ~ 100
-                    menuView.height == height ~ 100
-                }
-                rootTransform = CGAffineTransformMakeScale(style.rootScale, style.rootScale)
-                rootAlpha = style.rootFadeAlpha
-                dimmerAlpha = 1
-                
-                contentAlpha = 0
-                contentDuration = animationDuration * 0.25
-                contentDelay = 0
-            } else {
-                animationDuration = style.animationCloseDuration
-                menuHeightConstaints = constrain(view, menuView, replace: menuHeightConstaints) { view, menuView in
-//                    menuView.top == view.bottom - height ~ 100
-                    menuView.height == height ~ 100
-                }
-                rootTransform = CGAffineTransformMakeScale(1, 1)
-                rootAlpha = 1
-                dimmerAlpha = 0
-                
-                contentAlpha = 1
-                contentDuration = animationDuration * 0.5
-                contentDelay = animationDuration * 0.5
+                reloadMenuItems()
             }
             
-            let drawState: CGFloat = expanded ? 1 : 0
+            let height = NovaMenuHeight + (expanded ? CGFloat(dataSource!.novaMenuNumberOfItems()) * style.itemHeight + style.menuPadding + style.menuBottomMargin : 0)
+            menuHeightConstaints = constrain(view, menuView, replace: menuHeightConstaints) { view, menuView in
+                menuView.height == height ~ 100
+            }
             
             // Show / Hide the Content Container
             UIView.animateWithDuration(contentDuration, delay: contentDelay, options: [.BeginFromCurrentState], animations: {
@@ -296,14 +280,14 @@ public class NovaMenuViewController: UIViewController {
                                        animations:
                 {
                     self.view.layoutIfNeeded()
+                    self.setNeedsStatusBarAppearanceUpdate()
+                    
                     self.rootViewController.view.transform = rootTransform
                     self.rootViewController.view.alpha = rootAlpha
-                    self.setNeedsStatusBarAppearanceUpdate()
                     self.dimmerView.alpha = dimmerAlpha
-                    CATransaction.begin()
-                    CATransaction.setAnimationDuration(animationDuration)
-                    self.menuView.navigationBar.expandButton.drawState = drawState
-                    CATransaction.commit()
+                    self.menuView.navigationBar.menuTitle.alpha = titleAlpha
+                    
+                    self.menuView.navigationBar.expandButton.type = buttonLineType
                 }
             ) { finished in
                 if let selected = self.menuView.tableView.indexPathForSelectedRow {
@@ -513,7 +497,7 @@ class NovaMenuTableViewCell: UITableViewCell {
 class NovaMenuNavigationBar: UIView {
     
     private let borderView = UIView(frame: CGRect.zero)
-    private let expandButton = NovaMenuButton(frame: CGRect.zero)
+    private let expandButton = NovaLineButton()
     private let menuTitle = UILabel(frame: CGRect.zero)
     
     
@@ -526,7 +510,10 @@ class NovaMenuNavigationBar: UIView {
         addSubview(menuTitle)
         addSubview(borderView)
         
-        expandButton.layer.drawsAsynchronously = true
+        expandButton.type = .Menu2
+        expandButton.inset = 8
+        expandButton.lineRadius = 1
+        expandButton.lineThickness = 2
         
         constrain(borderView, expandButton, menuTitle, self) { borderView, expandButton, menuTitle, view in
             borderView.left == view.left
@@ -539,10 +526,10 @@ class NovaMenuNavigationBar: UIView {
             expandButton.bottom == view.bottom
             expandButton.width == expandButton.height
             
-            menuTitle.left == expandButton.right + 10
+            menuTitle.left == expandButton.right + 4
             menuTitle.top == view.top
             menuTitle.bottom == view.bottom
-            menuTitle.right == view.right - 10
+            menuTitle.right == view.right - 8
         }
     }
     
@@ -552,96 +539,7 @@ class NovaMenuNavigationBar: UIView {
 }
 
 
-class NovaMenuButton: UIButton {
-    
-    var lineColor: UIColor = .whiteColor() {
-        didSet {
-            self.layer.setValue(lineColor, forKey: "lineColor")
-        }
-    }
-    
-    var drawState: CGFloat = 0 {
-        didSet {
-            self.layer.setValue(drawState, forKey: "drawState")
-        }
-    }
-    
-    override func drawRect(rect: CGRect) {
-        // do nothing. the layer draws.
-    }
-    
-    override class func layerClass() -> AnyClass {
-        return NovaMenuButtonLayer.self
-    }
-    
-    
-    class NovaMenuButtonLayer: CALayer {
-        
-        @NSManaged var drawState: CGFloat
-        @NSManaged var lineColor: UIColor
-        
-        override class func needsDisplayForKey(key: String) -> Bool {
-            if (key == "drawState") {
-                return true
-            }
-            return super.needsDisplayForKey(key)
-        }
-        
-        override func actionForKey(key: String) -> CAAction? {
-            if (key == "drawState") {
-                let anim: CABasicAnimation = CABasicAnimation(keyPath: key)
-                anim.fromValue = presentationLayer()?.drawState
-                anim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-                return anim
-            } else {
-                return super.actionForKey(key)
-            }
-        }
-        
-        override func drawInContext(context: CGContext) {
-            super.drawInContext(context)
-            
-            UIGraphicsPushContext(context)
-            
-            
-            //// Variable Declarations
-            let bottomAngle: CGFloat = 45 * max(0, drawState - 0.5) * 2
-            let topAngle: CGFloat = -bottomAngle
-            let topY: CGFloat = min(drawState * 2, 1) * 4
-            let bottomY: CGFloat = -topY
-            
-            //// topBar Drawing
-            CGContextSaveGState(context)
-            CGContextTranslateCTM(context, 22, (topY + 18))
-            CGContextRotateCTM(context, -topAngle * CGFloat(M_PI) / 180)
-            
-            let topBarPath = UIBezierPath(roundedRect: CGRect(x: -12, y: -1, width: 24, height: 2), cornerRadius: 1)
-            lineColor.setFill()
-            topBarPath.fill()
-            
-            CGContextRestoreGState(context)
-            
-            //// bottomBar Drawing
-            CGContextSaveGState(context)
-            CGContextTranslateCTM(context, 22, (bottomY + 26))
-            CGContextRotateCTM(context, -bottomAngle * CGFloat(M_PI) / 180)
-            
-            let bottomBarPath = UIBezierPath(roundedRect: CGRect(x: -12, y: -1, width: 24, height: 2), cornerRadius: 1)
-            lineColor.setFill()
-            bottomBarPath.fill()
-            
-            CGContextRestoreGState(context)
-            
-            UIGraphicsPopContext()
-        }
-        
-    }
-    
-}
-
-
-
-public extension UIViewController {
+extension UIViewController {
     
     public var novaMenuController: NovaMenuViewController? {
         var parent = self.parentViewController
