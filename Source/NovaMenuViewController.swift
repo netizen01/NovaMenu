@@ -9,7 +9,6 @@ import Cartography
 import NovaLines
 
 
-
 public struct NovaMenuStyle {
     public var itemHeight: CGFloat = 44
     public var topMargin: CGFloat = 100
@@ -75,11 +74,11 @@ public class NovaMenuItem {
 
 
 // Changing this will require redoing the Expand Button Animation ... so don't.
-private let NovaMenuHeight: CGFloat = 44
+private let NovaMenuHeight: CGFloat = 52
 private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
 
 
-public class NovaMenuViewController: UIViewController {
+@objc public class NovaMenuViewController: UIViewController {
     
     public var dataSource: NovaMenuDataSource? {
         didSet {
@@ -89,7 +88,7 @@ public class NovaMenuViewController: UIViewController {
     public var delegate: NovaMenuDelegate?
     
     
-    private(set) var rootViewController: UIViewController!
+    public private(set) var rootViewController: UIViewController!
     private var style: NovaMenuStyle = NovaMenuStyle()
     
     private let menuView = NovaMenuView(frame: CGRect.zero)
@@ -172,7 +171,9 @@ public class NovaMenuViewController: UIViewController {
         // TODO: animate the expand button
     }
 
-    
+    public var contentView: UIView {
+        return menuView.contentContainer
+    }
     
     
     
@@ -366,7 +367,7 @@ class NovaMenuView: UIView {
         addSubview(contentContainer)
         
         contentContainer.clipsToBounds = true
-        contentContainer.backgroundColor = .yellowColor()
+        contentContainer.backgroundColor = .clearColor()
         
         tableView.backgroundColor = .clearColor()
         tableView.clipsToBounds = true
@@ -536,20 +537,4 @@ class NovaMenuNavigationBar: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-
-extension UIViewController {
-    
-    public var novaMenuController: NovaMenuViewController? {
-        var parent = self.parentViewController
-        while let p = parent {
-            if p is NovaMenuViewController {
-                return (p as! NovaMenuViewController)
-            }
-            parent = p.parentViewController
-        }
-        return nil
-    }
-    
 }
