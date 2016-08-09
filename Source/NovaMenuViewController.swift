@@ -25,8 +25,8 @@ public struct NovaMenuStyle {
     public var menuBorderColor: UIColor = .clearColor()
     public var menuTitleColor: UIColor = .whiteColor()
     
-    public var animationOpenDuration: NSTimeInterval = 0.75
-    public var animationCloseDuration: NSTimeInterval = 0.6
+    public var animationOpenDuration: NSTimeInterval = 0.5
+    public var animationCloseDuration: NSTimeInterval = 0.35
     public var animationSpringVelocity: CGFloat = 0.5
     public var animationSpringDamping: CGFloat = 0.7
     
@@ -175,9 +175,17 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         return menuView.contentContainer
     }
     
+    override public func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
+        return rootViewController.preferredInterfaceOrientationForPresentation()
+    }
     
+    override public func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+        return rootViewController.supportedInterfaceOrientations()
+    }
     
-    
+    override public func shouldAutorotate() -> Bool {
+        return rootViewController.shouldAutorotate()
+    }
     
     override public func loadView() {
         super.loadView()
