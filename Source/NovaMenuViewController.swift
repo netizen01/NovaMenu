@@ -89,7 +89,11 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
     
     
     public private(set) var rootViewController: UIViewController!
-    private var style: NovaMenuStyle = NovaMenuStyle()
+    public var style: NovaMenuStyle = NovaMenuStyle() {
+        didSet {
+            applyStyle()
+        }
+    }
     
     private let menuView = NovaMenuView(frame: CGRect.zero)
     private var menuHeightConstaints: ConstraintGroup!
@@ -190,10 +194,6 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
     override public func loadView() {
         super.loadView()
         
-        view.backgroundColor = style.backgroundColor
-        
-        menuView.backgroundColor = style.menuColor
-        dimmerView.backgroundColor = style.dimmerColor
         
         view.addSubview(rootViewController.view)
         view.addSubview(dimmerView)
@@ -229,15 +229,30 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         }
         
         menuView.navigationBar.expandButton.addTarget(self, action: #selector(NovaMenuViewController.expandButtonHandler(_:)), forControlEvents: .TouchUpInside)
+
+        
+        menuView.tableView.dataSource = self
+        menuView.tableView.delegate = self
+        
+        applyStyle()
+        
+    }
+    
+    private func applyStyle() {
+        view.backgroundColor = style.backgroundColor
+        
+        menuView.backgroundColor = style.menuColor
+        dimmerView.backgroundColor = style.dimmerColor
+        
         menuView.navigationBar.expandButton.lineColor = style.buttonColor
         menuView.navigationBar.borderView.backgroundColor = style.menuBorderColor
         menuView.navigationBar.menuTitle.font = style.menuTitleFont
         menuView.navigationBar.menuTitle.textColor = style.menuTitleColor
         
         menuView.tableView.separatorColor = style.separatorColor
-        menuView.tableView.dataSource = self
-        menuView.tableView.delegate = self
         
+        menuView.tableView.setNeedsDisplay()
+        menuView.tableView.reloadData()
     }
     
     func expandButtonHandler(sender: UIButton) {
