@@ -396,6 +396,7 @@ class NovaMenuView: UIView {
         tableView.clipsToBounds = true
         tableView.alwaysBounceVertical = false
         tableView.showsVerticalScrollIndicator = false
+        tableView.scrollsToTop = false
         tableView.registerClass(NovaMenuTableViewCell.self, forCellReuseIdentifier: NovaMenuTableViewCell.Identifier)
         
         constrain(navigationBar, tableView, self) { navigationBar, tableView, view in
@@ -485,7 +486,7 @@ class NovaMenuTableViewCell: UITableViewCell {
             
             titleLabel.centerY == contentView.centerY
             titleLabel.left == iconView.right + 20
-            titleLabel.right == contentView.right - 20
+            titleLabel.right == contentView.right - 20 ~ 100
         }
     }
     
