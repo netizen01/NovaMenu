@@ -15,7 +15,7 @@ Pod::Spec.new do |spec|
     spec.source_files   = 'Source/**/*.swift'
 
     spec.dependency     'NovaCore', '~> 0.2'
-    spec.dependency     'Cartography', '~> 0.6'
+    spec.dependency     'Cartography'
     spec.dependency     'NovaLines', '~> 0.1'
 
 end
