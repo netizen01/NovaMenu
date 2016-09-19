@@ -8,7 +8,7 @@ Pod::Spec.new do |spec|
     spec.license        = { :type => 'MIT', :file => 'LICENSE' }
     spec.author         = { 'Netizen01' => 'n01@invco.de' }
 
-    spec.ios.deployment_target  = '8.4'
+    spec.ios.deployment_target  = '8.2'
 
     spec.source         = { :git => 'https://github.com/netizen01/NovaMenu.git',
                             :tag => spec.version.to_s }
