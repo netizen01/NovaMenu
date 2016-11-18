@@ -20,17 +20,17 @@ public struct NovaMenuStyle {
     public var backgroundColor: UIColor = UIColor(red:0.27, green:0.32, blue:0.35, alpha:1.00)
     public var menuColor: UIColor = UIColor(red:0.27, green:0.32, blue:0.35, alpha:1.00)
     public var dimmerColor: UIColor = UIColor(red:0.27, green:0.32, blue:0.35, alpha:0.75)
-    public var buttonColor: UIColor = .whiteColor()
+    public var buttonColor: UIColor = .white
     public var separatorColor: UIColor = UIColor(white: 1, alpha: 0.25)
-    public var menuBorderColor: UIColor = .clearColor()
-    public var menuTitleColor: UIColor = .whiteColor()
+    public var menuBorderColor: UIColor = .clear
+    public var menuTitleColor: UIColor = .white
     
-    public var animationOpenDuration: NSTimeInterval = 0.5
-    public var animationCloseDuration: NSTimeInterval = 0.35
+    public var animationOpenDuration: TimeInterval = 0.5
+    public var animationCloseDuration: TimeInterval = 0.35
     public var animationSpringVelocity: CGFloat = 0.5
     public var animationSpringDamping: CGFloat = 0.7
     
-    public var openStatusBarStyle: UIStatusBarStyle = .LightContent
+    public var openStatusBarStyle: UIStatusBarStyle = .lightContent
     public var menuTitleFont: UIFont = UIFont(name: NovaMenuDefaultFontName, size: 18)!
     
     public init() {
@@ -40,15 +40,15 @@ public struct NovaMenuStyle {
 
 public protocol NovaMenuDataSource {
     func novaMenuNumberOfItems() -> Int
-    func novaMenuItemAtIndex(index: Int) -> NovaMenuItem
+    func novaMenuItemAtIndex(_ index: Int) -> NovaMenuItem
     func novaMenuTitle() -> String?
 }
 
 public protocol NovaMenuDelegate {
-    func novaMenuItemSelectedAtIndex(index: Int)
+    func novaMenuItemSelectedAtIndex(_ index: Int)
 }
 
-public class NovaMenuItem {
+open class NovaMenuItem {
     var title: String
     var font: UIFont
     var image: UIImage
@@ -78,29 +78,29 @@ private let NovaMenuHeight: CGFloat = 52
 private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
 
 
-@objc public class NovaMenuViewController: UIViewController {
+@objc open class NovaMenuViewController: UIViewController {
     
-    public var dataSource: NovaMenuDataSource? {
+    open var dataSource: NovaMenuDataSource? {
         didSet {
             reloadMenuItems()
         }
     }
-    public var delegate: NovaMenuDelegate?
+    open var delegate: NovaMenuDelegate?
     
     
-    public private(set) var rootViewController: UIViewController!
-    public var style: NovaMenuStyle = NovaMenuStyle() {
+    open fileprivate(set) var rootViewController: UIViewController!
+    open var style: NovaMenuStyle = NovaMenuStyle() {
         didSet {
             applyStyle()
         }
     }
     
-    private let menuView = NovaMenuView(frame: CGRect.zero)
-    private var menuHeightConstaints: ConstraintGroup!
-    private var menuVisibleConstaints: ConstraintGroup!
+    fileprivate let menuView = NovaMenuView(frame: CGRect.zero)
+    fileprivate var menuHeightConstaints: ConstraintGroup!
+    fileprivate var menuVisibleConstaints: ConstraintGroup!
     
-    private let dimmerView = UIView(frame: CGRect.zero)
-    private var tapToClose: UITapGestureRecognizer!
+    fileprivate let dimmerView = UIView(frame: CGRect.zero)
+    fileprivate var tapToClose: UITapGestureRecognizer!
     
     public init(rootViewController: UIViewController, style: NovaMenuStyle? = nil) {
         super.init(nibName: nil, bundle: nil)
@@ -118,7 +118,7 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
     }
     
     
-    public var menuHidden: Bool = false {
+    open var menuHidden: Bool = false {
         didSet {
             if menuHidden {
                 menuVisibleConstaints = constrain(view, rootViewController.view, menuView, replace: menuVisibleConstaints) { view, rootView, menuView in
@@ -134,17 +134,17 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         }
     }
     
-    public func setMenuHidden(hidden: Bool, animated: Bool) {
+    open func setMenuHidden(_ hidden: Bool, animated: Bool) {
         menuHidden = hidden
         if animated {
-            UIView.animateWithDuration(0.25, animations: {
+            UIView.animate(withDuration: 0.25, animations: {
                 self.view.layoutIfNeeded()
             })
         }
     }
     
     
-    public func setMenuOpen(open: Bool, animated: Bool) {
+    open func setMenuOpen(_ open: Bool, animated: Bool) {
         expanded = open
         
         if animated {
@@ -154,44 +154,44 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         }
     }
     
-    public func closeMenu(animated: Bool) {
+    open func closeMenu(_ animated: Bool) {
         expanded = false
         if animated {
             
         }
     }
     
-    public func openMenu(animated: Bool) {
+    open func openMenu(_ animated: Bool) {
         expanded = true
         if animated {
             
         }
     }
     
-    public func reloadMenuItems() {
+    open func reloadMenuItems() {
         menuView.tableView.reloadData()
         menuView.navigationBar.menuTitle.text = dataSource?.novaMenuTitle()
         
         // TODO: animate the expand button
     }
 
-    public var contentView: UIView {
+    open var contentView: UIView {
         return menuView.contentContainer
     }
     
-    override public func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
-        return rootViewController.preferredInterfaceOrientationForPresentation()
+    override open var preferredInterfaceOrientationForPresentation : UIInterfaceOrientation {
+        return rootViewController.preferredInterfaceOrientationForPresentation
     }
     
-    override public func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return rootViewController.supportedInterfaceOrientations()
+    override open var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        return rootViewController.supportedInterfaceOrientations
     }
     
-    override public func shouldAutorotate() -> Bool {
-        return rootViewController.shouldAutorotate()
+    override open var shouldAutorotate : Bool {
+        return rootViewController.shouldAutorotate
     }
     
-    override public func loadView() {
+    override open func loadView() {
         super.loadView()
         
         
@@ -228,7 +228,7 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
             menuView.height == NovaMenuHeight ~ 100
         }
         
-        menuView.navigationBar.expandButton.addTarget(self, action: #selector(NovaMenuViewController.expandButtonHandler(_:)), forControlEvents: .TouchUpInside)
+        menuView.navigationBar.expandButton.addTarget(self, action: #selector(NovaMenuViewController.expandButtonHandler(_:)), for: .touchUpInside)
 
         
         menuView.tableView.dataSource = self
@@ -238,7 +238,7 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         
     }
     
-    private func applyStyle() {
+    fileprivate func applyStyle() {
         view.backgroundColor = style.backgroundColor
         
         menuView.backgroundColor = style.menuColor
@@ -255,15 +255,15 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         menuView.tableView.reloadData()
     }
     
-    func expandButtonHandler(sender: UIButton) {
+    func expandButtonHandler(_ sender: UIButton) {
         expanded = !expanded
     }
     
-    override public func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return expanded ? style.openStatusBarStyle : rootViewController.preferredStatusBarStyle()
+    override open var preferredStatusBarStyle : UIStatusBarStyle {
+        return expanded ? style.openStatusBarStyle : rootViewController.preferredStatusBarStyle
     }
     
-    private var expanded: Bool = false {
+    fileprivate var expanded: Bool = false {
         didSet {
             if expanded && (dataSource?.novaMenuNumberOfItems() ?? 0) == 0 {
                 expanded = false
@@ -271,14 +271,14 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
             }
             
             let animationDuration = expanded ? style.animationOpenDuration : style.animationCloseDuration
-            let rootTransform = expanded ? CGAffineTransformMakeScale(style.rootScale, style.rootScale) : CGAffineTransformMakeScale(1, 1)
+            let rootTransform = expanded ? CGAffineTransform(scaleX: style.rootScale, y: style.rootScale) : CGAffineTransform(scaleX: 1, y: 1)
             let rootAlpha: CGFloat = expanded ? style.rootFadeAlpha : 1
             let dimmerAlpha: CGFloat = expanded ? 1 : 0
             let contentAlpha: CGFloat = expanded ? 0 : 1
             let titleAlpha: CGFloat = expanded ? 1 : 0
             let contentDuration = expanded ? animationDuration * 0.25 : animationDuration * 0.5
-            let contentDelay: NSTimeInterval = expanded ? 0 : animationDuration * 0.5
-            let drawState: CGFloat = expanded ? 1 : 0
+            let contentDelay: TimeInterval = expanded ? 0 : animationDuration * 0.5
+            let _: CGFloat = expanded ? 1 : 0
             let buttonLineType: NovaLineType = expanded ? .Close : .Menu2
             if expanded {
                 reloadMenuItems()
@@ -290,17 +290,17 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
             }
             
             // Show / Hide the Content Container
-            UIView.animateWithDuration(contentDuration, delay: contentDelay, options: [.BeginFromCurrentState], animations: {
+            UIView.animate(withDuration: contentDuration, delay: contentDelay, options: [.beginFromCurrentState], animations: {
                 self.menuView.contentContainer.alpha = contentAlpha
             }) { finished in
                 
             }
             
-            UIView.animateWithDuration(animationDuration,
+            UIView.animate(withDuration: animationDuration,
                                        delay: 0,
                                        usingSpringWithDamping: style.animationSpringDamping,
                                        initialSpringVelocity: style.animationSpringVelocity,
-                                       options: [.CurveEaseInOut, .BeginFromCurrentState, .AllowAnimatedContent],
+                                       options: [.beginFromCurrentState, .allowAnimatedContent],
                                        animations:
                 {
                     self.view.layoutIfNeeded()
@@ -315,20 +315,20 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
                 }
             ) { finished in
                 if let selected = self.menuView.tableView.indexPathForSelectedRow {
-                    self.menuView.tableView.deselectRowAtIndexPath(selected, animated: false)
+                    self.menuView.tableView.deselectRow(at: selected, animated: false)
                 }
                 if !self.expanded {
-                    for (index, cell) in (self.menuView.tableView.visibleCells as! [NovaMenuTableViewCell]).enumerate() {
+                    for (index, cell) in (self.menuView.tableView.visibleCells as! [NovaMenuTableViewCell]).enumerated() {
                         cell.reset(1 + CGFloat(index) * 0.5)
                     }
-                    self.menuView.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: false)
+                    self.menuView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
                 }
             }
             
             if expanded {
-                for (index, cell) in (self.menuView.tableView.visibleCells as! [NovaMenuTableViewCell]).enumerate() {
+                for (index, cell) in (self.menuView.tableView.visibleCells as! [NovaMenuTableViewCell]).enumerated() {
                     cell.reset(1 + CGFloat(index) * 0.5)
-                    cell.animateIn(animationDuration, delay: (animationDuration * 0.25) + NSTimeInterval(index) * 0.05)
+                    cell.animateIn(animationDuration, delay: (animationDuration * 0.25) + TimeInterval(index) * 0.05)
                 }
             }
             
@@ -339,19 +339,19 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
 
 extension NovaMenuViewController: UITableViewDataSource {
     
-    public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource?.novaMenuNumberOfItems() ?? 0
     }
     
-    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(NovaMenuTableViewCell.Identifier, forIndexPath: indexPath) as! NovaMenuTableViewCell
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: NovaMenuTableViewCell.Identifier, for: indexPath) as! NovaMenuTableViewCell
         cell.menuItem = dataSource!.novaMenuItemAtIndex(indexPath.row)
         return cell
     }
     
-    public func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = NovaMenuTableHeaderView()
-        header.gradientLayer.colors = [style.menuColor.CGColor, style.menuColor.colorWithAlphaComponent(0).CGColor]
+        header.gradientLayer.colors = [style.menuColor.cgColor, style.menuColor.withAlphaComponent(0).cgColor]
         return header
     }
     
@@ -359,15 +359,15 @@ extension NovaMenuViewController: UITableViewDataSource {
 
 extension NovaMenuViewController: UITableViewDelegate {
     
-    public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return style.itemHeight
     }
     
-    public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return style.menuPadding
     }
     
-    public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         expanded = false
         if let menuItem = dataSource?.novaMenuItemAtIndex(indexPath.row) {
             menuItem.action?()
@@ -378,9 +378,9 @@ extension NovaMenuViewController: UITableViewDelegate {
 
 class NovaMenuView: UIView {
     
-    private let navigationBar = NovaMenuNavigationBar(frame: CGRect.zero)
-    private let contentContainer = UIView(frame: CGRect.zero)
-    private let tableView = UITableView(frame: CGRect.zero)
+    fileprivate let navigationBar = NovaMenuNavigationBar(frame: CGRect.zero)
+    fileprivate let contentContainer = UIView(frame: CGRect.zero)
+    fileprivate let tableView = UITableView(frame: CGRect.zero)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -390,14 +390,14 @@ class NovaMenuView: UIView {
         addSubview(contentContainer)
         
         contentContainer.clipsToBounds = true
-        contentContainer.backgroundColor = .clearColor()
+        contentContainer.backgroundColor = .clear
         
-        tableView.backgroundColor = .clearColor()
+        tableView.backgroundColor = .clear
         tableView.clipsToBounds = true
         tableView.alwaysBounceVertical = false
         tableView.showsVerticalScrollIndicator = false
         tableView.scrollsToTop = false
-        tableView.registerClass(NovaMenuTableViewCell.self, forCellReuseIdentifier: NovaMenuTableViewCell.Identifier)
+        tableView.register(NovaMenuTableViewCell.self, forCellReuseIdentifier: NovaMenuTableViewCell.Identifier)
         
         constrain(navigationBar, tableView, self) { navigationBar, tableView, view in
             navigationBar.left == view.left
@@ -425,7 +425,7 @@ class NovaMenuView: UIView {
 }
 
 class NovaMenuTableHeaderView: UIView {
-    override class func layerClass() -> AnyClass {
+    override class var layerClass : AnyClass {
         return CAGradientLayer.self
     }
     
@@ -449,7 +449,7 @@ class NovaMenuTableViewCell: UITableViewCell {
             if let menuItem = menuItem {
                 titleLabel.text = menuItem.title
                 titleLabel.font = menuItem.font
-                iconView.image = menuItem.image.imageWithRenderingMode(.AlwaysTemplate)
+                iconView.image = menuItem.image.withRenderingMode(.alwaysTemplate)
                 titleLabel.textColor = menuItem.color
                 tintColor = menuItem.color
             }
@@ -461,15 +461,15 @@ class NovaMenuTableViewCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = .clearColor()
-        titleLabel.textColor = .whiteColor()
-        tintColor = .whiteColor()
-        selectionStyle = .None
+        backgroundColor = .clear
+        titleLabel.textColor = .white
+        tintColor = .white
+        selectionStyle = .none
         
         iconView.alpha = 0
         titleLabel.alpha = 0
         
-        iconView.contentMode = .ScaleAspectFit
+        iconView.contentMode = .scaleAspectFit
         
         contentView.addSubview(iconView)
         contentView.addSubview(titleLabel)
@@ -477,7 +477,7 @@ class NovaMenuTableViewCell: UITableViewCell {
         constrainItems(false)
     }
     
-    private func constrainItems(active: Bool, distanceMod: CGFloat = 1) {
+    fileprivate func constrainItems(_ active: Bool, distanceMod: CGFloat = 1) {
         itemConstraints = constrain(contentView, iconView, titleLabel, replace: itemConstraints) { contentView, iconView, titleLabel in
             iconView.centerY == contentView.centerY
             iconView.height == 20
@@ -486,32 +486,32 @@ class NovaMenuTableViewCell: UITableViewCell {
             
             titleLabel.centerY == contentView.centerY
             titleLabel.left == iconView.right + 20
-            titleLabel.right == contentView.right - 20 ~ 100
+            titleLabel.right == contentView.right - 20 ~ LayoutPriority(100)
         }
     }
     
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
         titleLabel.textColor = selected ? menuItem?.colorSelected : menuItem?.color
         tintColor = titleLabel.textColor
     }
     
-    func animateIn(duration: NSTimeInterval, delay: NSTimeInterval) {
+    func animateIn(_ duration: TimeInterval, delay: TimeInterval) {
         
         constrainItems(true)
-        UIView.animateWithDuration(duration, delay: delay, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.5,  options: [.CurveEaseOut], animations: {
+        UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.5,  options: [.curveEaseOut], animations: {
             self.layoutIfNeeded()
             }) { (finished) in
         }
-        UIView.animateWithDuration(duration * 0.5, delay: delay + duration * 0.1, options: [.CurveEaseOut], animations: {
+        UIView.animate(withDuration: duration * 0.5, delay: delay + duration * 0.1, options: [.curveEaseOut], animations: {
             self.iconView.alpha = 1
             self.titleLabel.alpha = 1
         }) { (finished) in
         }
     }
     
-    func reset(distanceMod: CGFloat = 1) {
+    func reset(_ distanceMod: CGFloat = 1) {
         constrainItems(false, distanceMod: distanceMod)
         layoutIfNeeded()
         iconView.alpha = 0
@@ -521,15 +521,15 @@ class NovaMenuTableViewCell: UITableViewCell {
 
 class NovaMenuNavigationBar: UIView {
     
-    private let borderView = UIView(frame: CGRect.zero)
-    private let expandButton = NovaLineButton()
-    private let menuTitle = UILabel(frame: CGRect.zero)
+    fileprivate let borderView = UIView(frame: CGRect.zero)
+    fileprivate let expandButton = NovaLineButton()
+    fileprivate let menuTitle = UILabel(frame: CGRect.zero)
     
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .clearColor()
+        backgroundColor = .clear
         
         addSubview(expandButton)
         addSubview(menuTitle)
