@@ -194,7 +194,6 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
     override open func loadView() {
         super.loadView()
         
-        
         view.addSubview(rootViewController.view)
         view.addSubview(dimmerView)
         view.addSubview(menuView)
@@ -230,7 +229,6 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         
         menuView.navigationBar.expandButton.addTarget(self, action: #selector(NovaMenuViewController.expandButtonHandler(_:)), for: .touchUpInside)
 
-        
         menuView.tableView.dataSource = self
         menuView.tableView.delegate = self
         
@@ -250,6 +248,7 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         menuView.navigationBar.menuTitle.textColor = style.menuTitleColor
         
         menuView.tableView.separatorColor = style.separatorColor
+        menuView.tableView.separatorStyle = .singleLine
         
         menuView.tableView.setNeedsDisplay()
         menuView.tableView.reloadData()
@@ -399,6 +398,7 @@ class NovaMenuView: UIView {
         tableView.scrollsToTop = false
         tableView.register(NovaMenuTableViewCell.self, forCellReuseIdentifier: NovaMenuTableViewCell.Identifier)
         
+        tableView.cellLayoutMarginsFollowReadableWidth = false
         constrain(navigationBar, tableView, self) { navigationBar, tableView, view in
             navigationBar.left == view.left
             navigationBar.right == view.right
@@ -498,7 +498,6 @@ class NovaMenuTableViewCell: UITableViewCell {
     }
     
     func animateIn(_ duration: TimeInterval, delay: TimeInterval) {
-        
         constrainItems(true)
         UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.5,  options: [.curveEaseOut], animations: {
             self.layoutIfNeeded()
@@ -507,7 +506,7 @@ class NovaMenuTableViewCell: UITableViewCell {
         UIView.animate(withDuration: duration * 0.5, delay: delay + duration * 0.1, options: [.curveEaseOut], animations: {
             self.iconView.alpha = 1
             self.titleLabel.alpha = 1
-        }) { (finished) in
+        }) { finished in
         }
     }
     
@@ -524,7 +523,6 @@ class NovaMenuNavigationBar: UIView {
     fileprivate let borderView = UIView(frame: CGRect.zero)
     fileprivate let expandButton = NovaLineButton()
     fileprivate let menuTitle = UILabel(frame: CGRect.zero)
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
