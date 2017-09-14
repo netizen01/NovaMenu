@@ -219,8 +219,8 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         }
         
         menuVisibleConstaints = constrain(view, rootViewController.view, menuView) { view, rootView, menuView in
-            menuView.bottom == view.bottom
-            rootView.bottom == view.bottom - NovaMenuHeight
+            menuView.bottom == view.bottomMargin
+            rootView.bottom == view.bottomMargin - NovaMenuHeight
         }
         
         menuHeightConstaints = constrain(view, menuView) { view, menuView in
@@ -237,7 +237,7 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
     }
     
     fileprivate func applyStyle() {
-        view.backgroundColor = style.backgroundColor
+        view.backgroundColor = style.menuColor
         
         menuView.backgroundColor = style.menuColor
         dimmerView.backgroundColor = style.dimmerColor
