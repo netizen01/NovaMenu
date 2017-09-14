@@ -17,7 +17,6 @@ public struct NovaMenuStyle {
     public var rootScale: CGFloat = 0.92
     public var rootFadeAlpha: CGFloat = 0.4
     
-    public var backgroundColor: UIColor = UIColor(red:0.27, green:0.32, blue:0.35, alpha:1.00)
     public var menuColor: UIColor = UIColor(red:0.27, green:0.32, blue:0.35, alpha:1.00)
     public var dimmerColor: UIColor = UIColor(red:0.27, green:0.32, blue:0.35, alpha:0.75)
     public var buttonColor: UIColor = .white
@@ -74,8 +73,8 @@ open class NovaMenuItem {
 
 
 // Changing this will require redoing the Expand Button Animation ... so don't.
-private let NovaMenuHeight: CGFloat = 52
-private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
+fileprivate let NovaMenuHeight: CGFloat = 52
+public let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
 
 
 @objc open class NovaMenuViewController: UIViewController {
@@ -154,7 +153,7 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         }
     }
     
-    open func closeMenu(_ animated: Bool) {
+    @objc open func closeMenu(_ animated: Bool) {
         expanded = false
         if animated {
             
@@ -254,7 +253,7 @@ private let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         menuView.tableView.reloadData()
     }
     
-    func expandButtonHandler(_ sender: UIButton) {
+    @objc func expandButtonHandler(_ sender: UIButton) {
         expanded = !expanded
     }
     
