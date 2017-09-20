@@ -1,0 +1,6 @@
+framework module NovaMenu {
+  umbrella header "NovaMenu-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,6 @@
+framework module NovaLines {
+  umbrella header "NovaLines-umbrella.h"
+
+  export *
+  module * { export * }
+}

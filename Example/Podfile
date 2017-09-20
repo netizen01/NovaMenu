@@ -1,0 +1,9 @@
+use_frameworks!
+
+target 'NovaMenuDemo' do
+    platform :ios, '9.3'
+	
+	pod 'NovaMenu', :path => '../'
+	pod 'NovaLines', '~> 0.5'
+end
+

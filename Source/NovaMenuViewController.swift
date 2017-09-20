@@ -223,7 +223,7 @@ public let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
         }
         
         menuHeightConstaints = constrain(view, menuView) { view, menuView in
-            menuView.height == NovaMenuHeight ~ 100
+            menuView.height == NovaMenuHeight ~ LayoutPriority(100)
         }
         
         menuView.navigationBar.expandButton.addTarget(self, action: #selector(NovaMenuViewController.expandButtonHandler(_:)), for: .touchUpInside)
@@ -277,14 +277,14 @@ public let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
             let contentDuration = expanded ? animationDuration * 0.25 : animationDuration * 0.5
             let contentDelay: TimeInterval = expanded ? 0 : animationDuration * 0.5
             let _: CGFloat = expanded ? 1 : 0
-            let buttonLineType: NovaLineType = expanded ? .Close : .Menu2
+            let buttonLineType: NovaLineType = expanded ? .close : .menu2
             if expanded {
                 reloadMenuItems()
             }
             
             let height = NovaMenuHeight + (expanded ? CGFloat(dataSource!.novaMenuNumberOfItems()) * style.itemHeight + style.menuPadding + style.menuBottomMargin : 0)
             menuHeightConstaints = constrain(view, menuView, replace: menuHeightConstaints) { view, menuView in
-                menuView.height == height ~ 100
+                menuView.height == height ~ LayoutPriority(100)
             }
             
             // Show / Hide the Content Container
@@ -532,7 +532,7 @@ class NovaMenuNavigationBar: UIView {
         addSubview(menuTitle)
         addSubview(borderView)
         
-        expandButton.type = .Menu2
+        expandButton.type = .menu2
         expandButton.inset = 8
         expandButton.lineRadius = 1
         expandButton.lineThickness = 2

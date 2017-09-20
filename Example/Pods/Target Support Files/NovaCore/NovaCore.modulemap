@@ -1,0 +1,6 @@
+framework module NovaCore {
+  umbrella header "NovaCore-umbrella.h"
+
+  export *
+  module * { export * }
+}
