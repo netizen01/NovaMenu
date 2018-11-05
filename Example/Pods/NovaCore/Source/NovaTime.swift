@@ -16,7 +16,15 @@ extension Double {
         let fraction = Int(elapsed * 10)
         return String(format: "%02d:%02d.%01d", mins, secs, fraction)
     }
-
+    
+    public var timeSF: String {
+        var elapsed = self
+        let secs = Int(floor(elapsed))
+        elapsed -= Double(secs)
+        let fraction = Int(elapsed * 10)
+        return String(format: "%02d.%01d", secs, fraction)
+    }
+    
     public var timeMS: String {
         var elapsed = self
         let mins = Int(floor(elapsed / 60.0))

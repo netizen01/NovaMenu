@@ -1,6 +1,6 @@
 {
   "name": "NovaMenu",
-  "version": "0.5",
+  "version": "0.6",
   "summary": "Sweet Menu Thing",
   "homepage": "https://github.com/netizen01/NovaMenu",
   "license": {
@@ -15,21 +15,19 @@
   },
   "source": {
     "git": "https://github.com/netizen01/NovaMenu.git",
-    "tag": "0.5"
+    "tag": "0.6"
   },
   "source_files": "Source/**/*.swift",
-  "pod_target_xcconfig": {
-    "SWIFT_VERSION": "4.0"
-  },
+  "swift_version": "4.2",
   "dependencies": {
     "NovaCore": [
-      "~> 0.5"
-    ],
-    "Cartography": [
 
     ],
     "NovaLines": [
-      "~> 0.5"
+
+    ],
+    "Cartography": [
+
     ]
   }
 }

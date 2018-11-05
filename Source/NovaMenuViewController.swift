@@ -107,7 +107,7 @@ public let NovaMenuDefaultFontName = "AvenirNextCondensed-DemiBold"
             self.style = style
         }
         self.rootViewController = rootViewController
-        addChildViewController(rootViewController)
+        addChild(rootViewController)
         
         tapToClose = UITapGestureRecognizer(target: self, action: #selector(NovaMenuViewController.closeMenu))
     }
@@ -457,7 +457,7 @@ class NovaMenuTableViewCell: UITableViewCell {
     
     var itemConstraints: ConstraintGroup = ConstraintGroup()
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         backgroundColor = .clear

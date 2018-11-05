@@ -7,6 +7,21 @@ import UIKit
 
 extension UIColor {
     
+    public func contrast() -> UIColor {
+        var r = CGFloat(0)
+        var g = CGFloat(0)
+        var b = CGFloat(0)
+        var a = CGFloat(0)
+        
+        getRed(&r, green: &g, blue: &b, alpha: &a)
+        
+        // Counting the perceptive luminance - human eye favors green color...
+        let luminance = 1 - ((0.299 * r) + (0.587 * g) + (0.114 * b))
+        
+        let d: CGFloat = luminance < 0.5 ? 0 : 1
+        return UIColor(red: d, green: d, blue: d, alpha: a)
+    }
+    
     public func pixel() -> UIImage {
         let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
         UIGraphicsBeginImageContext(rect.size)
@@ -65,7 +80,7 @@ extension UIColor {
             let scanner = Scanner(string: hex)
             var hexValue: CUnsignedLongLong = 0
             if scanner.scanHexInt64(&hexValue) {
-                switch (hex.characters.count) {
+                switch (hex.count) {
                 case 3:
                     red = CGFloat((hexValue & 0xF00) >> 8) / 15.0
                     green = CGFloat((hexValue & 0x0F0) >> 4) / 15.0
