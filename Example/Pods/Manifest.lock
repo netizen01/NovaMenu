@@ -1,8 +1,8 @@
 PODS:
   - Cartography (3.1.0)
-  - NovaCore (0.7)
-  - NovaLines (0.7)
-  - NovaMenu (0.6):
+  - NovaCore (0.8)
+  - NovaLines (0.8)
+  - NovaMenu (0.8):
     - Cartography
     - NovaCore
     - NovaLines
@@ -23,10 +23,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Cartography: 1988b7578871a56c036e7af17195cb2190edf18c
-  NovaCore: 05fede9551d63efdf38093fb22caeac3ff43f149
-  NovaLines: 723fa1fdbf64e38db12af9de95f2658168b14f3a
-  NovaMenu: 25000496cc5101d7e131608d21a447fee29908e9
+  NovaCore: 5f2ed889f1a95b4d566ad168b78eb6a8e7727662
+  NovaLines: 91d2b73eb0b33c1cc0caa976af751dce3c0ab01f
+  NovaMenu: 9959bd46e56799041f7c663e8d928282f65a51c4
 
 PODFILE CHECKSUM: f0acf4f818d2a5349b0f1bd26702080e76136667
 
-COCOAPODS: 1.6.0.beta.1
+COCOAPODS: 1.7.0.beta.2

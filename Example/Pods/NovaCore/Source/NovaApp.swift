@@ -5,14 +5,25 @@
 
 import UIKit
 
-@objc open class UIApplicationVersion: NSObject, Comparable {
+final public class UIApplicationVersion: Comparable {
+    public static func < (lhs: UIApplicationVersion, rhs: UIApplicationVersion) -> Bool {
+        return lhs.majorVersion < rhs.majorVersion ||
+            (lhs.majorVersion == rhs.majorVersion && lhs.minorVersion < rhs.minorVersion) ||
+            (lhs.majorVersion == rhs.majorVersion && lhs.minorVersion == rhs.minorVersion && lhs.patchVersion < rhs.patchVersion)
+    }
     
-    open var majorVersion: Int = 0
-    open var minorVersion: Int = 0
-    open var patchVersion: Int = 0
-    open var buildNumber: Int = 0
+    public static func == (lhs: UIApplicationVersion, rhs: UIApplicationVersion) -> Bool {
+        return lhs.majorVersion == rhs.majorVersion &&
+            lhs.minorVersion == rhs.minorVersion &&
+            lhs.patchVersion == rhs.patchVersion
+    }
     
-    open func toString(_ major: Bool = true, minor: Bool = true, patch: Bool = true, build: Bool = false) -> String {
+    public var majorVersion: Int = 0
+    public var minorVersion: Int = 0
+    public var patchVersion: Int = 0
+    public var buildNumber: Int = 0
+    
+    public func toString(_ major: Bool = true, minor: Bool = true, patch: Bool = true, build: Bool = false) -> String {
         var v: [String] = []
         if major {
             v.append("\(majorVersion)")
@@ -30,7 +41,7 @@ import UIKit
         return version
     }
     
-    override open var description: String {
+    public var description: String {
         return toString()
     }
     
@@ -53,26 +64,13 @@ import UIKit
     
 }
 
-public func <(lhs: UIApplicationVersion, rhs: UIApplicationVersion) -> Bool {
-    return lhs.majorVersion < rhs.majorVersion ||
-        (lhs.majorVersion == rhs.majorVersion && lhs.minorVersion < rhs.minorVersion) ||
-        (lhs.majorVersion == rhs.majorVersion && lhs.minorVersion == rhs.minorVersion && lhs.patchVersion < rhs.patchVersion)
-}
-
-public func ==(lhs: UIApplicationVersion, rhs: UIApplicationVersion) -> Bool {
-    return lhs.majorVersion == rhs.majorVersion &&
-        lhs.minorVersion == rhs.minorVersion &&
-        lhs.patchVersion == rhs.patchVersion
-}
-
-
-@objc open class NovaApp: NSObject {
+final public class NovaApp {
     
-    open class func bundleIdentifier() -> String? {
+    public class func bundleIdentifier() -> String? {
         return Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String
     }
     
-    open class func applicationVersion() -> UIApplicationVersion {
+    public class func applicationVersion() -> UIApplicationVersion {
         let av = UIApplicationVersion()
         
         if let infoDict = Bundle.main.infoDictionary {

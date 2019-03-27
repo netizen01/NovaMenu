@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
     spec.name                   = 'NovaMenu'
-    spec.version                = '0.6'
+    spec.version                = '0.8'
     spec.summary                = 'Sweet Menu Thing'
 
     spec.homepage               = 'https://github.com/netizen01/NovaMenu'
@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
     spec.source                 = { :git => 'https://github.com/netizen01/NovaMenu.git',
                                     :tag => spec.version.to_s }
     spec.source_files           = 'Source/**/*.swift'
-    spec.swift_version          = '4.2'
+    spec.swift_versions         = ['5.0']
 
     spec.dependency             'NovaCore'
     spec.dependency             'NovaLines'
